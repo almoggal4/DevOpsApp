@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 1
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      volumes:
+        - name: pv-php-web-files
+          persistentVolumeClaim:
+            claimName: pvc-web
+      containers:
+        - name: backend
+          image: php:fpm-alpine
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - mountPath: "/usr/php"
+              name: pv-php-web-files
