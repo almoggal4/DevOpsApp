@@ -1,0 +1,36 @@
+---
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: frontend-service 
+spec:
+  type: NodePort
+  selector:
+    app: webapp 
+  ports:
+    - port: 8888
+      nodePort: 30050
+      targetPort: 5000
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 1
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: frontend
+          image: almoggal/python-weather-app9:latest
+          ports:
+            - containerPort: 5000
+---
