@@ -1,0 +1,43 @@
+terraform commands:
+    terraform init - define the current dir as the terraform configuration dir + install neccesery plugins from neccesery providers.
+    terrafrom plan - check the configuration of the dir: either it is ready to be deployed or not. prints the changes that will be made in the current infrastructre.
+    terrafrom apply - apply the changes made in the current dir in the current infrastructre.
+    terrafrom output - prints out the output we define in our variable file (using output block).
+    terrafrom show - show the current dir infrastructre (flag -json is for printing it in the json format).
+    terraform validate - check if the current configuration dir is validate.
+    terraform fmt - prints the files that were change from the last apply command.
+    terraform providers - prints the providers used in the current configuration
+    terraform providers mirror <path> - mirrors the current providers to a second dir.
+    terraform refresh - refresh the current infrastructre knowen by terraform. useful when manual changes, outside of terraform, are being made for the infrastruce. modify only the state
+                        file but not the resources. the command is being run automatically by running terraform plan/apply.
+    terraform graph - gets an html static web with resoueces dependecies and infrastructre.
+    terraform destroy - destroy all the current dir infrastruce
+    terraform state list(all resources - no deatils)/mv(move between state files/rename resource)/pull(pull remote state file)/
+                    /rm(remove resources from state file)/show(resource configuration) - change the state file
+    terraform taint <resource> - the resource will be destroy and build again during the next apply
+                                 event if we didn't change the resource (like a destroy for one resource)
+    terraform untaint <resouece> - to cancel tainting of the resource.
+    terraform import <provider name> <resource name> - imports an external resource to terraform's state file. then we can 
+                                                        manage it from the main.tf, when we create similar resource block.
+    terraform workspace create <workspace name> - create a terraform workspace, and use it in the .tf files and variables.tf 
+                                                  using "terraform.workspace"
+    terraform workspace switch <workspace name> - switch to specific terraform worksapce
+    * terraform will create a terraform.tfstate.d (dir) and inside it a dir and a state file for every workspace we will use. 
+------------------------------
+terraform remote state file & state file locking
+problem:    
+    1.  terraform remote state - store the state file in a remote shared storage but not in a version control (like github/gitlab).
+    2.  terraform state locking - terraform stores state files locally to avoid coruption of the state file and uses state locking 
+        to avoid multiply applies on the same machine.
+    3.  also the data in the state file is sensative - he describes all of our infrastruce configuration, therefore we want to encrypt it.
+
+conclusion: 
+    1. local - run terraform state file locally, and every developer will be in charge of part of the infrastructre.
+    2. remote state - store the state file in remote shared storage, that support file locking and encryption like AWS S3.
+       configure the developres to sync automatically- load and upload - against the remote state file. 
+
+aws:
+    1. create an AWS S3 bucket containing the terraform remote state file.
+    2. create an AWS DynamoDB table to provide the S3 file object locking (the terraform state file locking)
+    3. craete a remote backend with the S3 bucket, S3 state file path and the DynamoDB locking table.
+----------------------------------------------------------------------------------------------------

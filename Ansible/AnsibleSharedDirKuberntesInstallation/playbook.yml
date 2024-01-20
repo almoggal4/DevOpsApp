@@ -1,0 +1,116 @@
+---
+- name: Download Kuberntes On The Servers
+  hosts: kubernetes-servers
+  remote_user: ubuntu
+  become: yes
+  tasks:
+  - name: apt update
+    apt:
+      upgrade: yes
+      update_cache: yes
+  - name: install apt-transport-https
+    apt:
+      name:  apt-transport-https
+      state: fixed
+  - name: install curl
+    apt:
+      name:  curl
+      state: fixed
+  
+  - name: Install ContainerD!!! create directory
+    shell: mkdir -p /etc/apt/keyrings
+  - name: delete old gpg signuture
+    shell: rm -f /etc/apt/keyrings/docker.gpg
+  - name: curl command to create gpg signuture
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  - name: check if /etc/apt/sources.list.d/docker.list exists
+    stat:
+      path: /etc/apt/sources.list.d/docker.list
+    register: stat_result_docker
+  - name: check if /etc/apt/sources.list.d/docker.list is empty
+    shell: cat /etc/apt/sources.list.d/docker.list
+    register: docker_list_content 
+    when: stat_result_docker.stat.exists
+  - name: remove file content from /etc/apt/sources.list.d/docker.list if exists
+    shell: tee /etc/apt/sources.list.d/docker.list > /dev/null
+    when: 
+      - stat_result_docker.stat.exists
+      - docker_list_content.stdout != ""
+  - name: apt update
+    apt:
+      upgrade: yes
+      update_cache: yes
+  - name: install containerd.io
+    apt:
+      name:  docker.io
+      state: fixed
+  
+  - name: Create containerd configuration!!! - create a directory
+    shell: mkdir -p /etc/containerd
+  - name: Configure containerd
+    shell: containerd config default | tee /etc/containerd/config.toml
+  - name: Change containerd configuration
+    lineinfile: 
+      path: /etc/containerd/config.toml
+      regexp: '^(.*)            SystemdCgroup = false(.*)$' 
+      line: '            SystemdCgroup = true'
+      backrefs: yes
+  - name: Restart the containerd service 
+    service:
+      name: containerd
+      state: restarted
+  
+  - name: Install Kubernetes!!! install gpg key
+    shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+  - name: Download Kubernetes repository
+    apt_repository:
+      repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+      state: present
+  - name: Install kubernetes packages
+    apt:
+      name:  "{{item}}"
+      state: fixed
+    with_items:
+      - "kubeadm"
+      - "kubelet"
+      - "kubectl"
+      - "kubernetes-cni"
+
+  - name: Disable swap!!! turn swap off
+    shell: swapoff -a
+  
+  - name: Configure netowrk!!! modprobe
+    shell: modprobe br_netfilter
+  - name: Configure ipv4 ip forward
+    shell: sysctl -w net.ipv4.ip_forward=1
+
+  - name: Kubeinit for use with Flannel!!! Check if kubeinit already been runned and if the control-plane node exists
+    shell: echo "hello"
+    register: node_role
+  - name: kubeinit for use with Flannel
+    shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+    when: node_role.stdout == ""
+
+  - name: Configure kubernets!!! Configure kubernets
+    shell: mkdir -p $HOME/.kube
+  - name: check if $HOME/.kube/config exists
+    stat:
+      path: $HOME/.kube/config
+    register: stat_result_k8s
+  - name: Configure kubernets
+    shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    when: not stat_result_k8s.stat.exists
+  - name: Configure kubernets
+    shell: chown $(id -u):$(id -g) $HOME/.kube/config
+
+  - name: Apply Flannel!!! Apply Flannel
+    shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/v0.20.2/Documentation/kube-flannel.yml
+  
+  - name: Disable node's taints!!! Check if taint is disabled
+    shell: "kubectl describe node  | grep Taints | awk -F: '{print $2}'"
+    register: k8s_node_taint
+  - name: Disable node's taints
+    shell: kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
+    when: k8s_node_taint.stdout != "             <none>"
+
+  

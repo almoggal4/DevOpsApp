@@ -1,0 +1,147 @@
+ansible conf files:
+
+/etc/ansible/ansible.cfg - default configuration file (invetory, colors, ssh timeout...)
+<my_ansible_dir>/ansible.cfg - same file as the default conf, but it's use for changing default 
+                               conf for the current dir.
+(env_variable)$ANSIBLE_CONFIG=<path to ansible.cfg> - to change the default ansible.conf file 
+                                                    (deffault value is /etc/ansible/ansible.cfg)
+            $Ansible_<Key>=<value> - change one value of the default conf
+<user's home dir path>/ansible.cfg - another plcae for the conf file
+
+
+priorety conf values:
+                    1. env_variable: $ANSIBLE_CONFIG=<path to ansible.cfg>/$Ansible_<Key>=<value>
+                    2. <my_ansible_dir>/ansible.cfg
+                    3. <user's home dir path>/ansible.cfg
+                    4. /etc/ansible/ansible.cfg 
+
+ansible-config list - list all configuration
+ansible-config view - shows the current config file
+ansible-config dump - show the current key/value and where it been applied (important)
+
+----------------------------------------------------------------------------------------------------------------------
+ansible invetory:
+a file that containes all the hosts configured with ansible.
+/etc/ansible/hosts - default invetory file's path (unless with configured another path)
+file view:
+[<group name>]
+ansible_host=<ip/dns> (must)
+<alias> ansible_host=<ip/dns> ansible_connection=<ssh/winrm/localhost> ansible_port=<22/5986> 
+                              ansible_user=<root/Administrator> ansible_ssh_pass=<password> (optional extra parametes)
+web ansible_host=1.2.3.4 ansible_connection=22
+
+------------------------------------------------------------------------------------------------
+ansible variabels use:
+variabels - file with key/value variabels 
+            dns-ip:1.2.3.4
+playbook.yml (file containes plays a play is a configuration of a server/s) - 
+            play1:
+                vars:
+                    dns-ip:1234 --> play variable - only for the play
+                line:
+                    'ping {{dns-ip}}'
+                    'ping {{hostvars[1.1.1.1][dns-ip]}} --> magic variable - get the value of a host variable
+                    'echo ansible_facts' --> facts variable - contains all the data about the remote host that ansible is 
+                                                              collecting when connecting to the host (ip, storage, connectivity, etc)
+
+hosts - know:
+    [web-server]
+    ansible_host=1.1.1.1 dns-ip=1.2.3.5 --> host variabel - only for that host (all plays with this host)
+    ansible_host=1.1.1.2
+    [web-server:vars]
+    dns-ip=1.2.3.4 --> group variable - only for the host's group (all plays with one of the hosts from the group)
+
+ansible cli:
+    ansible playbook.yml --extra-vars "dns-ip:1.2.3.4" --> command variable - gloabl variable for all the playbook
+priorety variabels:
+    1. command variable
+    2. play variabels
+    3. host variabels
+    4. group variabels
+
+-------------------------------------------------------------------------------------------------------------
+ansible playbook:
+playbook file (.yml):
+    play:
+        tasks:
+            excute commnad/run script/intall a pcakage/shautdown restart
+
+ansible-playbook <playbook-name>.yml
+
+------------------------------------------------------------------------------------------------------------------
+ansible playbook verification
+
+ansible-playbook <playbook-name>.yml --check --> not changing any of the configuration and 
+                                                printing what will happen if we run the playbook
+                                    -- diff --> changing the configuration and printing what changed
+
+if the playbook failes in the middle of the run, that could lead to half changed/error in the hosts.
+
+-------------------------------------------------------------------------------------------------------------------
+ansible playbook loops & conditions
+
+name: create user
+hosts: localhosts
+tasks:
+    - user: name='{{item.name}}' state='{{item.present}}'
+    loop: (with_users*)
+    - name:almog
+      state: present
+    - name:aviv
+      state: present
+    - name:dana
+      state: active
+when: ansible_os='centos'
+
+with_<module> (module that conists loop and integration with somthing else. i.e with_files, with_users, 
+               with_mongo, etc.)
+
+------------------------------------------------------------------------------------------------------
+ansible playbook output & condition
+
+- name: check if /etc/apt/sources.list.d/docker.list is empty
+  shell: cat /etc/apt/sources.list.d/docker.list
+  register: docker_list_content --> the output of the check command
+
+- name: remove file content from /etc/apt/sources.list.d/docker.list if exists
+  shell: tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: docker_list_content.stdout != "" --> do this task if the output is not empty
+
+--------------------------------------------------------------------------------------------------------
+ansible playbook handlers
+
+- name: Deploy applied
+  copy:
+    src: ./app_code/
+    dest: /home/remote-host/app_code/
+  notify: Restart App Service --> create a notification after this task has been done
+
+handlers:
+  - name: Restart App Service --> trigger handler's task based on that notification
+    service: --> run this task if the handler's task has been trigger (restart service due to code change)
+        name: application_service
+        state: restarted
+
+----------------------------------------------------------------------------------------------------------
+ansible roles:
+
+package/image of playbook --> we can create a role/download it from the ansible galxy (like dockerhub)
+                              
+                              if downloading just use the "ansible-galxy role download <name>"
+                              
+                              if creating just use the "ansible-galaxy init <name>", then fill all the required files 
+                              based on your playbook (it will create vars, tasks, handlers, etc. just write the 
+                              yml blocks from the playbook into this files
+
+to use a role in your playbook (export):
+1. create a playbook:
+- name: create playbook based on role
+  hosts: db-server
+  roles: --> the name of the role configured
+    - mysql
+  vars: --> variables we want to pass/change of the role
+    mysql_user_name: db-user
+2. create the self/download the role to either a role directory in your playbook directory or in the /etc/ansible/roles folder-
+   which is the default folder for role, based on ansible configuration (can be changed to whatever you want)
+
+ansible-galaxy list - list all the configured roles on the system

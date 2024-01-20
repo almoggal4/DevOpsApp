@@ -20,8 +20,8 @@ variable "kubernetesVpcSubnetPublicCidr" {
 
 variable "KubernetesAdminsManagmentIpsCidr" {
   type = list(string)
-  default = ["147.235.207.112/32"]
-  description = "The public IP's CIDRs that will manges the kubernetes cluster"
+  default = []
+  description = "The public IP's CIDRs that will manges the kubernetes cluster."
 }
 
 variable "KubernetesEc2Setting" {
@@ -31,4 +31,11 @@ variable "KubernetesEc2Setting" {
     "instance_type" = "t3.medium"
     "key_pair_name" = "kubernetes-managment-key-pair"
   }
+  description = "The setup configuration for the ec2 K8s instance."
+}
+
+variable "PrivateFilesLocation" {
+  type = string
+  default = "../../PrivateFiles/"
+  description = "The path to the private folder for secret files."
 }

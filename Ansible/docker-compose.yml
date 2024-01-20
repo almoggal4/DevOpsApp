@@ -1,0 +1,17 @@
+services:
+  ansible:
+    container_name: ansible
+    image: ubuntu:20.04
+    build:
+      context: ./
+    volumes:
+      - "./AnsibleSharedDirKuberntesInstallation:/home/root/AnsibleSharedDirKuberntesInstallation/"
+      - "../../PrivateFiles/kubernetes-managment-key-pair-private.pem:/home/root/PrivateFiles/kubernetes-managment-key-pair-private.pem"
+    deploy:
+      restart_policy:
+        condition: on-failure
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    user:
+      root
+    

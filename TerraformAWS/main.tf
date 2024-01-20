@@ -62,11 +62,15 @@ resource "aws_vpc_security_group_ingress_rule" "InboundSecurityGroupAllowAllPriv
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
+data "http" "MyPublicIp" {
+  url = "https://ipv4.icanhazip.com"
+}
+
 # security group inbound rule that allows all traffic from the managment ips
 resource "aws_vpc_security_group_ingress_rule" "InboundSecurityGroupAllowAllPublicTraffic" {
   security_group_id = aws_security_group.kubernetes-cluster-security-group.id
-  count = length(var.KubernetesAdminsManagmentIpsCidr)
-  cidr_ipv4         = element(var.KubernetesAdminsManagmentIpsCidr, count.index)
+  count = length(var.KubernetesAdminsManagmentIpsCidr) + 1
+  cidr_ipv4         = element("${concat(var.KubernetesAdminsManagmentIpsCidr, ["${chomp(data.http.MyPublicIp.body)}/32"])}", count.index)
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
@@ -137,7 +141,7 @@ resource "aws_key_pair" "kubernets-ec2-key-pair" {
 # creates 2 versions of files: pem (the old private key file) and ppk (the new prvate key file - for putty i.e)
 resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  content = "${tls_private_key.kubernetes-managment-key-pair.private_key_pem}"
- filename = "${var.KubernetesEc2Setting["key_pair_name"]}-private.pem"
+ filename = "${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem"
  file_permission ="0400"
  depends_on = [
   tls_private_key.kubernetes-managment-key-pair
@@ -146,7 +150,7 @@ resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  provisioner "local-exec" {
     when = create
     on_failure = continue
-    command = "winscp.com /keygen ${var.KubernetesEc2Setting["key_pair_name"]}-private.pem /output=${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
+    command = "winscp.com /keygen ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem /output=${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
  }
  # delete the ppk file when the resource is deleted
  provisioner "local-exec" {
@@ -168,7 +172,9 @@ resource "aws_instance" "kubernetes-cluster-ec2" {
   tags = var.AwsProjectTags # tags
 }
 
+
 resource "aws_eip" "kubernetes-cluster-ec2-elastic-ip" {
   instance = aws_instance.kubernetes-cluster-ec2.id
   domain = "vpc"
+  tags = var.AwsProjectTags
 }
