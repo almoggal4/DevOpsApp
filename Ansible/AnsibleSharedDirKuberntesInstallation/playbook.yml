@@ -23,19 +23,8 @@
     shell: rm -f /etc/apt/keyrings/docker.gpg
   - name: curl command to create gpg signuture
     shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  - name: check if /etc/apt/sources.list.d/docker.list exists
-    stat:
-      path: /etc/apt/sources.list.d/docker.list
-    register: stat_result_docker
-  - name: check if /etc/apt/sources.list.d/docker.list is empty
-    shell: cat /etc/apt/sources.list.d/docker.list
-    register: docker_list_content 
-    when: stat_result_docker.stat.exists
-  - name: remove file content from /etc/apt/sources.list.d/docker.list if exists
-    shell: tee /etc/apt/sources.list.d/docker.list > /dev/null
-    when: 
-      - stat_result_docker.stat.exists
-      - docker_list_content.stdout != ""
+  - name: handle docker.list file
+    shell: echo "deb [arch{{'='}}$(dpkg --print-architecture) signed-by{{'='}}/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
   - name: apt update
     apt:
       upgrade: yes
@@ -85,21 +74,20 @@
     shell: sysctl -w net.ipv4.ip_forward=1
 
   - name: Kubeinit for use with Flannel!!! Check if kubeinit already been runned and if the control-plane node exists
-    shell: echo "hello"
-    register: node_role
+    stat:
+      path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    register: stat_result_k8s
   - name: kubeinit for use with Flannel
     shell: kubeadm init --pod-network-cidr=10.244.0.0/16
-    when: node_role.stdout == ""
+    when: not stat_result_k8s.stat.exists
 
   - name: Configure kubernets!!! Configure kubernets
     shell: mkdir -p $HOME/.kube
-  - name: check if $HOME/.kube/config exists
-    stat:
-      path: $HOME/.kube/config
-    register: stat_result_k8s
   - name: Configure kubernets
-    shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    when: not stat_result_k8s.stat.exists
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: $HOME/.kube/config
+      remote_src: yes
   - name: Configure kubernets
     shell: chown $(id -u):$(id -g) $HOME/.kube/config
 
