@@ -145,3 +145,7 @@ to use a role in your playbook (export):
    which is the default folder for role, based on ansible configuration (can be changed to whatever you want)
 
 ansible-galaxy list - list all the configured roles on the system
+
+---------------------------------------------------------------------------------------------------
+ansible collection - packages, modules, roles
+ansible-galaxy collecion install amazon.aws

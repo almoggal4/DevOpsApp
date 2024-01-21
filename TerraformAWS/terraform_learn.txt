@@ -3,7 +3,7 @@ terraform commands:
     terrafrom plan - check the configuration of the dir: either it is ready to be deployed or not. prints the changes that will be made in the current infrastructre.
     terrafrom apply - apply the changes made in the current dir in the current infrastructre.
     terrafrom output - prints out the output we define in our variable file (using output block).
-    terrafrom show - show the current dir infrastructre (flag -json is for printing it in the json format).
+    terrafrom show - show the current dir infrastructre (the state file) (flag -json is for printing it in the json format).
     terraform validate - check if the current configuration dir is validate.
     terraform fmt - prints the files that were change from the last apply command.
     terraform providers - prints the providers used in the current configuration
