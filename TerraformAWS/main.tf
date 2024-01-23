@@ -173,8 +173,19 @@ resource "aws_instance" "kubernetes-cluster-ec2" {
 }
 
 
-resource "aws_eip" "kubernetes-cluster-ec2-elastic-ip" {
-  instance = aws_instance.kubernetes-cluster-ec2.id
-  domain = "vpc"
-  tags = var.AwsProjectTags
+# resource "aws_eip" "kubernetes-cluster-ec2-elastic-ip" {
+#   instance = aws_instance.kubernetes-cluster-ec2.id
+#   domain = "vpc"
+#   tags = var.AwsProjectTags
+# }
+
+# get the pre created elatic ip for consistent ip for the ec2
+data "aws_eip" "pre_created_elastic_ip" {
+  id = var.PreCreatedElasticIPAllocationId
+}
+
+# allocate the ip to the ec2
+resource "aws_eip_association" "eip_assoc" {
+  instance_id = aws_instance.kubernetes-cluster-ec2.id
+  allocation_id = data.aws_eip.pre_created_elastic_ip.id
 }

@@ -39,3 +39,9 @@ variable "PrivateFilesLocation" {
   default = "../../PrivateFiles/"
   description = "The path to the private folder for secret files."
 }
+
+variable "PreCreatedElasticIPAllocationId" {
+  type = string
+  default = "eipalloc-0525d74cfd39791cb"
+  description = "The pre-created elatsic ip's allocation id."
+}
