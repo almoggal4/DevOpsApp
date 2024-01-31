@@ -1,0 +1,26 @@
+version: '3.6'
+services:
+  gitlab:
+    #image: docker:19.03-dind
+    container_name: gitlab
+    build:
+      context: ./
+    ports:
+      - '9090:80'
+      - '443:443'
+      - '22:22'
+    privileged: true
+    tty: true
+    user:
+      root
+    # set the ulimits for the docker daemon so he can run
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 26677
+        hard: 46677
+    networks:
+      - global-docker-container-network
+networks:
+  global-docker-container-network:
+    external: true

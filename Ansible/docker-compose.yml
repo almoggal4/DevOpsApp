@@ -7,11 +7,15 @@ services:
     volumes:
       - "./AnsibleSharedDirKuberntesInstallation:/home/root/AnsibleSharedDirKuberntesInstallation/"
       - "../../PrivateFiles/kubernetes-managment-key-pair-private.pem:/home/root/PrivateFiles/kubernetes-managment-key-pair-private.pem"
-    deploy:
-      restart_policy:
-        condition: on-failure
+    
+    restart: always
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     user:
       root
+    networks:
+      - global-docker-container-network
+networks:
+  global-docker-container-network:
+    external: true
     

@@ -1,0 +1,12 @@
+services:
+  remote-host-ssh:
+    container_name: remote-host-ssh
+    image: centos
+    build:
+      context: ./
+    restart: always
+    networks:
+      - global-docker-container-network
+networks:
+  global-docker-container-network:
+    external: true
