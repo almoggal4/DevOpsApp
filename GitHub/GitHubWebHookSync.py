@@ -5,8 +5,13 @@ import subprocess
 
 GITHUB_USERNAME = "almoggal4"
 GITHUB_PROJECT_NAME = "DevOpsApp"
-GITHUB_API_ACCESS_TOKEN = "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"
+
+GITHUB_API_ACCESS_TOKEN_FILE = r"c:\Users\almog\Desktop\PrivateFiles\GitHubAPIAccessToken.txt"
 NGROK_DEFAULT_WEB_PORT = "4040"
+
+with open(GITHUB_API_ACCESS_TOKEN_FILE, 'r') as f:
+    GITHUB_API_ACCESS_TOKEN = f.read()
+    print(GITHUB_API_ACCESS_TOKEN)
 
 # find/create port for the ngork's information url
 ngork_conf_file = os.popen('ngrok config check').read().replace("Valid configuration file at ", "").replace("/", "\\").replace("\n", "")
