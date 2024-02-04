@@ -1,14 +1,13 @@
 services:
   jenkins:
     container_name: jenkins
-    image: jenkins/jenkins:2.426.2-jdk17
     build:
       context: ./
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - "./JenkinsCurrentConfiguration:/var/jenkins_home"
+      - "../../../JenkinsCurrentConfiguration:/var/jenkins_home"
       - "../JenkinsSharedVolume:/var/jenkins_home/SharedFiles"
     restart: always
     user:
