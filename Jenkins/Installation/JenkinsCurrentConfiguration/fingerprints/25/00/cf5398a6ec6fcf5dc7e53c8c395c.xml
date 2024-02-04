@@ -1,0 +1,13 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<fingerprint>
+  <timestamp>2024-02-04 15:28:15.627 UTC</timestamp>
+  <md5sum>2500cf5398a6ec6fcf5dc7e53c8c395c</md5sum>
+  <fileName>Credential id=GitHubCredentials name=almoggal4/****** (GitHubCredentials)</fileName>
+  <usages>
+    <entry>
+      <string>temp</string>
+      <ranges>1</ranges>
+    </entry>
+  </usages>
+  <facets/>
+</fingerprint>

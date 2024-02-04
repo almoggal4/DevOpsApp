@@ -8,13 +8,15 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - "/tmp/jenkins-data:/var/jenkins_home"
+      - "./JenkinsCurrentConfiguration:/var/jenkins_home"
       - "../JenkinsSharedVolume:/var/jenkins_home/SharedFiles"
     restart: always
     user:
       root
     networks:
       - global-docker-container-network
+    # added
+    tty: true
 networks:
   global-docker-container-network:
     external: true
