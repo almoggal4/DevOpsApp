@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   flask:
-    build: .
-    image: almoggal/python-weather-app9
+    #build: ./
+    image: almoggal/python-weather-app9:latest
     ports:
-     - "5000"
+     - "5000:5000"

@@ -1,1 +1,0 @@
-curl.exe -sO http://localhost:8080/jnlpJars/agent.jar & java -jar agent.jar -jnlpUrl http://localhost:8080/computer/LOCAL/jenkins-agent.jnlp -secret 751e6e955ff07961515ee2d9996f354b146e3903738eacf811472992d01896e0 -workDir "C:\jenkins"
