@@ -5,7 +5,9 @@ services:
     build:
       context: ./
     volumes:
-      - "./AnsibleSharedDirKuberntesInstallation:/home/root/AnsibleSharedDirKuberntesInstallation/"
+    # shared folder with my pc
+      - "./AnsibleSharedFiles:/home/root/AnsibleSharedFiles/"
+    # shared .pem file for connecting to the ec2
       - "../../PrivateFiles/kubernetes-managment-key-pair-private.pem:/home/root/PrivateFiles/kubernetes-managment-key-pair-private.pem"
     
     restart: always

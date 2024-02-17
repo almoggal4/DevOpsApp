@@ -13,6 +13,3 @@ RUN apt-get install -y docker-ce containerd.io docker-buildx-plugin docker-compo
 RUN mkdir /var/jenkins_home/SharedFiles
 RUN jenkins-plugin-cli --plugins "blueocean docker-workflow"
 WORKDIR /root
-# configuring ssh settings to all relevent servers + start docker daemon
-RUN echo 'ssh-keygen -f /root/.ssh/id_rsa -P ""' >> /usr/local/bin/jenkins.sh
-#CMD ssh-keygen -f /root/.ssh/id_rsa -P ""

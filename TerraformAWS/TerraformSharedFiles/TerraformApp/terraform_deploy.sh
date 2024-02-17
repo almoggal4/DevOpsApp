@@ -7,9 +7,14 @@ validate_output=$(terraform validate)
 expected_value="Success!"
 
 echo "$validate_output"
-# Check if the output equals the expected value
+# Check if terraform configuration is valid
 if [[ "$validate_output" == *"$expected_value"* ]]; then
-    sudo terraform apply -auto-approve
+    #sudo terraform apply -auto-approve
+    # save the public ip of the ec2 for later use
+    terraform output
+    #terraform_output_ip=$(terraform output)
+    #ec2_created_public_ip="$(cut -d' ' -f3 <<<"$terraform_output_ip")"
+    #echo "$ec2_created_public_ip" | sed s/'"'//
 else
     echo "Terraform validate has failed, check the configuration of the terraform files."
     exit 1

@@ -9,7 +9,7 @@ services:
     volumes:
     # folder to save the configuration of jenkins
       - "../../../JenkinsCurrentConfiguration:/var/jenkins_home"
-    # share the pre-configured ssh public key with the other services
+    # share the pre-configured ssh private key + public key to share with the other services
       - "/c/Users/almog/Desktop/PrivateFiles/JenkinsSSH:/root/.ssh/"
     restart: always
     user:

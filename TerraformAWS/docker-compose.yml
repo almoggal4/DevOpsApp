@@ -32,3 +32,5 @@ secrets:
     file: /c/Users/almog/Desktop/PrivateFiles/credentials
   # JenkinsSSHPublicKey:
   #  file: /c/Users/almog/Desktop/PrivateFiles/JenkinsSSH/id_rsa.pub
+
+# mklink /h "C:\Users\almog\Desktop\DevopsApp\TerraformAWS\TerraformSharedFiles\JenkinsPublicKey\jenkinspublickey.pub" "C:\Users\almog\Desktop\PrivateFiles\JenkinsSSH\id_rsa.pub"

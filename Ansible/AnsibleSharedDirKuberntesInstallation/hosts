@@ -1,2 +1,0 @@
-[kubernetes-servers]
-master ansible_host=3.74.189.204 ansible_connection=ssh ansible_ssh_private_key_file=../PrivateFiles/kubernetes-managment-key-pair-private.pem
