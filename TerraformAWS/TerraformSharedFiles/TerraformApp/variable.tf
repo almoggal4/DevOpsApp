@@ -1,3 +1,10 @@
+# variable "DefaultAWSRegion" {
+#   type = string
+#   default = "eu-central-1"
+#   description = "The CIDR of the K8S cluster VPC."
+# }
+
+
 variable "AwsProjectTags" {
   type = map(string)
   default = {
@@ -36,7 +43,7 @@ variable "KubernetesEc2Setting" {
 
 variable "PrivateFilesLocation" {
   type = string
-  default = "../../PrivateFiles/"
+  default = "/Terraform/PrivateFiles/"
   description = "The path to the private folder for secret files."
 }
 

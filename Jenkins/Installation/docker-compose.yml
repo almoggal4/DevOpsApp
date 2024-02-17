@@ -7,10 +7,10 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-    # shared folder with my pc
-      - "../../../JenkinsCurrentConfiguration:/var/jenkins_home"
     # folder to save the configuration of jenkins
-      - "../JenkinsSharedVolume:/var/jenkins_home/SharedFiles"
+      - "../../../JenkinsCurrentConfiguration:/var/jenkins_home"
+    # share the pre-configured ssh public key with the other services
+      - "/c/Users/almog/Desktop/PrivateFiles/JenkinsSSH:/root/.ssh/"
     restart: always
     user:
       root
@@ -18,8 +18,16 @@ services:
       - global-docker-container-network
     tty: true
     privileged: true
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 26677
+        hard: 46677
 networks:
   global-docker-container-network:
     external: true
 
+# to start docker:
+# apt-get install -y docker-ce containerd.io docker-buildx-plugin docker-compose-plugin 
+# service docker start
 

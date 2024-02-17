@@ -1,0 +1,34 @@
+services:
+  remote-host-ssh:
+    container_name: terraform-aws
+    build:
+      context: ./
+    restart: always
+    volumes:
+      # Share terraform files with my pc
+      - "./TerraformSharedFiles/:/Terraform/TerraformAWSInfrastructure/"
+    networks:
+      - global-docker-container-network
+    privileged: true
+    tty: true
+    secrets:
+      - source: AWSConfig
+        target: /root/.aws/config
+      - source: AWSCredentials
+        target: /root/.aws/credentials
+      # - source: JenkinsSSHPublicKey
+      #   target: /home/jenkins-remote-user/.ssh/authorized_keys
+      #   uid: '1000'
+      #   gid: '1000'
+      #   mode: 0600
+networks:
+  global-docker-container-network:
+    external: true
+# pre configure the awscli
+secrets:
+  AWSConfig:
+    file: /c/Users/almog/Desktop/PrivateFiles/config
+  AWSCredentials:
+    file: /c/Users/almog/Desktop/PrivateFiles/credentials
+  # JenkinsSSHPublicKey:
+  #  file: /c/Users/almog/Desktop/PrivateFiles/JenkinsSSH/id_rsa.pub

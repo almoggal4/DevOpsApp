@@ -1,8 +1,12 @@
-# resource object attributes provide simply.
 # provider "aws" {
 #   region = "eu-central-1"
-#   access_key = "AKIA25NELYLWBVRQA5ME"
-#   secret_key = "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"
+# }
+
+# provider "aws" {
+#   region = "eu-central-1"
+#   #shared_config_files = ["/root/.aws/config"]
+#   shared_credentials_files = "/root/.aws/credentials"
+#   #profile = "default"
 # }
 
 # create a vpc for the k8s cluster
@@ -150,16 +154,17 @@ resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  provisioner "local-exec" {
     when = create
     on_failure = continue
-    command = "winscp.com /keygen ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem /output=${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
+    command = "puttygen ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem -O private -o ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
  }
- # delete the ppk file when the resource is deleted
- provisioner "local-exec" {
-   when = destroy
-   on_failure = fail
-   command = "del /S *.ppk"
- }
-
 }
+ # delete the ppk file when the resource is deleted
+# provisioner "local-exec" {
+#   when = destroy
+#   on_failure = fail
+#   command = "del /S *.ppk"
+# }
+#
+#}
 
 # create ec2 instance to run the k8s cluster
 resource "aws_instance" "kubernetes-cluster-ec2" {
