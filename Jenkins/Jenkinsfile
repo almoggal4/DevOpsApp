@@ -1,18 +1,19 @@
 pipeline {
     agent any
     stages {
-        stage('Create External Infrastructure') {
+        stage('Create External AWS Infrastructure - Terraform') {
             steps {
                 echo 'Create/Comply the exteranl infrastructre in AWS Terraform'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "terraform-aws"'
-                sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_script_log'
+                sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_ec2_public_ip'
+                echo "Terraform infrastructure was successfully deployed on AWS"
             }
         }
-        stage('Create Internal Kubernetes Infrastructure') {
+        stage('Create Internal Kubernetes Infrastructure - Ansible') {
             steps {
                 echo 'Create/Comply the Kubernetes internal infrastructre in AWS EC2 using Ansible'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "ansible"'
-                // sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@ansible "cd /home/root/AnsibleSharedFiles/SSHKuberntesInstallation && "'
+                sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@ansible "cd /home/root/AnsibleSharedFiles/SSHKuberntesInstallation && cd /Terraform/TerraformAWSInfrastructure/TerraformApp/terraform_deploy.sh"'
             }
         }
         stage('Build') {
