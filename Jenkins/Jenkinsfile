@@ -5,7 +5,6 @@ pipeline {
             steps {
                 echo 'Create/Comply the exteranl infrastructre in AWS Terraform'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "terraform-aws"'
-                sh 'mkdir /root/terraform_script_log'
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_script_log'
             }
         }
