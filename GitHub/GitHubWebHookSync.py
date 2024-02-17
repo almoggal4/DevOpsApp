@@ -15,6 +15,7 @@ with open(GITHUB_API_ACCESS_TOKEN_FILE, 'r') as f:
 
 # find/create port for the ngork's information url
 ngork_conf_file = os.popen('ngrok config check').read().replace("Valid configuration file at ", "").replace("/", "\\").replace("\n", "")
+print(ngork_conf_file)
 ngork_port = ""
 with open(ngork_conf_file, 'r') as f:
     ngork_conf_web_port = f.read()
@@ -32,10 +33,10 @@ print("ngrok default port: " + ngork_port)
 # create ngork public url forward to http://localhost:8080
 # run the forward ip (if it is not running)
 try:
-    subprocess.Popen("'ngrok http 8080' >nul 2>&1")
-except:
+    subprocess.Popen("ngrok http 8080", shell=True)
+except Exception as e:
     print("Ngrok forward is already running")
-
+    raise e
 # get the public ip
 r = requests.get('http://localhost:' + ngork_port + '/api/tunnels')
 ngork_public_url = r.json()['tunnels'][0]['public_url']
