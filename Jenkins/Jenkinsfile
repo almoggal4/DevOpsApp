@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo 'Create/Comply the Kubernetes internal infrastructre in AWS EC2 using Ansible'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "ansible"'
-                sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@ansible "cd /home/root/AnsibleSharedFiles/SSHKuberntesInstallation && "'
+                // sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@ansible "cd /home/root/AnsibleSharedFiles/SSHKuberntesInstallation && "'
             }
         }
         stage('Build') {
