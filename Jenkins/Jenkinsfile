@@ -6,7 +6,6 @@ pipeline {
                 echo 'Create/Comply the exteranl infrastructre in AWS and Kubernetes using Terraform and Ansible'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "terraform-aws"'
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh"'
-                "!!!!!!!!!!!!!!!!!!!!!!!!! create bash script to check terraform plan and then apply"
             }
         }
 
