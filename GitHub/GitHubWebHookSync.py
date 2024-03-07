@@ -73,5 +73,5 @@ else:
     json_response = response.json()
     print(json_response)
 
-# fix the update url
+# fix the update url.
 # update also the url in jenkins
