@@ -74,4 +74,4 @@ else:
     print(json_response)
 
 # fix the update url.
-# update also the url in jenkins
+# update also the url in jenkins.
