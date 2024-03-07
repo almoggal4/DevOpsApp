@@ -37,7 +37,7 @@ try:
 except Exception as e:
     print("Ngrok forward is already running")
     raise e
-# get the public ip
+# get the public url
 r = requests.get('http://localhost:' + ngork_port + '/api/tunnels')
 ngork_public_url = r.json()['tunnels'][0]['public_url']
 
@@ -72,3 +72,6 @@ else:
     response = requests.post(api_url, json=body, headers=headers)
     json_response = response.json()
     print(json_response)
+
+# fix the update url
+# update also the url in jenkins
