@@ -52,26 +52,26 @@ response = requests.get(api_url, headers=headers)
 json_response = response.json()
 # there is a webhook already
 if len(json_response) == 1:
-    print("Github webhook already exists - updating url")
+    print("Github webhook already exists - deleting")
     webhook_id = json_response[0]['id']
     api_url = "https://api.github.com/repos/" + GITHUB_USERNAME + "/" + GITHUB_PROJECT_NAME + "/hooks/" + str(webhook_id)
     headers = {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + GITHUB_API_ACCESS_TOKEN,
                "X-GitHub-Api-Version": "2022-11-28"}
     body = {'config': {'content_type': 'form', 'insecure_ssl': '0', 'url': github_webhook_url}}
-    response = requests.patch(api_url, json=body, headers=headers)
+    response = requests.delete(api_url, json=body, headers=headers)
     json_response = response.json()
     print(json_response)
 # create new webhook
-else:
-    print("Github webhook not exists - creating new webhook")
-    api_url = "https://api.github.com/repos/" + GITHUB_USERNAME + "/" + GITHUB_PROJECT_NAME + "/hooks"
-    headers = {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + GITHUB_API_ACCESS_TOKEN,
-               "X-GitHub-Api-Version": "2022-11-28"}
-    body = {"name": "web", "active": True, "events": ["push"], "config":
-            {"url": github_webhook_url, "content_type": "json", "insecure_ssl": "0"}}
-    response = requests.post(api_url, json=body, headers=headers)
-    json_response = response.json()
-    print(json_response)
+
+print("Creating new webhook")
+api_url = "https://api.github.com/repos/" + GITHUB_USERNAME + "/" + GITHUB_PROJECT_NAME + "/hooks"
+headers = {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + GITHUB_API_ACCESS_TOKEN,
+           "X-GitHub-Api-Version": "2022-11-28"}
+body = {"name": "web", "active": True, "events": ["push"], "config":
+        {"url": github_webhook_url, "content_type": "json", "insecure_ssl": "0"}}
+response = requests.post(api_url, json=body, headers=headers)
+json_response = response.json()
+print(json_response)
 
 # fix the update url.
 # update also the url in jenkins.

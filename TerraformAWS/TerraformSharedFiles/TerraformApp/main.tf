@@ -146,7 +146,7 @@ resource "aws_key_pair" "kubernets-ec2-key-pair" {
 resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  content = "${tls_private_key.kubernetes-managment-key-pair.private_key_pem}"
  filename = "${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem"
- file_permission ="0400"
+ file_permission ="0777"
  depends_on = [
   tls_private_key.kubernetes-managment-key-pair
  ]
