@@ -150,7 +150,7 @@ resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  depends_on = [
   tls_private_key.kubernetes-managment-key-pair
  ]
- # convert the pem to ppk when the resource is created
+ # convert the pem to ppk when the resource is created.
  provisioner "local-exec" {
     when = create
     on_failure = continue
