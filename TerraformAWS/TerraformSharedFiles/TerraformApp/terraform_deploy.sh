@@ -9,6 +9,8 @@ expected_value="Success!"
 if [[ "$validate_output" == *"$expected_value"* ]]; then
     # apply the validate configuration
     sudo terraform apply -auto-approve
+    # refreshing the new state
+    terraform refresh
     # save the public ip of the ec2 for later use
     terraform_output_ip=$(terraform output)
     ec2_created_public_ip="$(cut -d' ' -f3 <<<"$terraform_output_ip")"
