@@ -15,7 +15,10 @@ if [ $valid_syntax -eq 0 ]; then
     ansible-playbook playbook.yml --check
     valid_playbook=$?
 
-    ansible-playbook playbook.yml -i ./hosts
+    if [ $valid_playbook -eq 0 ]; then
+        echo "Playbook is valid and can be executed."
+        # run the ansible playbook to install k8s on the ec2 (using the udated host file)
+        ansible-playbook playbook.yml -i ./hosts
     else
         echo "Playbook contains errors."
     fi
