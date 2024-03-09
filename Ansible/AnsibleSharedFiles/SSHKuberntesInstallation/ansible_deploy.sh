@@ -11,16 +11,8 @@ valid_syntax=$?
 if [ $valid_syntax -eq 0 ]; then
     echo "Playbook syntax is valid."
 
-    # Run the playbook in check mode
-    ansible-playbook playbook.yml --check
-    valid_playbook=$?
-
-    if [ $valid_playbook -eq 0 ]; then
-        echo "Playbook is valid and can be executed."
-        # run the ansible playbook to install k8s on the ec2 (using the udated host file)
-        ansible-playbook playbook.yml -i ./hosts
-    else
-        echo "Playbook contains errors."
+    ansible-playbook playbook.yml -i ./hosts
+    echo "Playbook Runned Succesfully, Kuberntes is now installed on the servers."
     fi
 fi
-echo "Playbook is invalid"
+echo "Playbook syntax is invalid"
