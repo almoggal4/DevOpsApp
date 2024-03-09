@@ -11,8 +11,13 @@ valid_syntax=$?
 if [ $valid_syntax -eq 0 ]; then
     echo "Playbook syntax is valid."
 
+    # Run the playbook in check mode
+    ansible-playbook playbook.yml --check
+    valid_playbook=$?
+
     ansible-playbook playbook.yml -i ./hosts
-    echo "Playbook Runned Succesfully, Kuberntes is now installed on the servers."
+    else
+        echo "Playbook contains errors."
     fi
 fi
-echo "Playbook syntax is invalid"
+echo "Playbook is invalid"
