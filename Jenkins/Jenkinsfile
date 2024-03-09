@@ -9,7 +9,7 @@ pipeline {
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_script_logs'
                 echo "Terraform infrastructure was successfully deployed on AWS"
                 // save the public ip of the ec2 for later use
-                sh 'tail -1 /root/terraform_script_logs > ec2_public_ip'
+                sh 'tail -1 /root/terraform_script_logs > /root/ec2_public_ip'
             }
         }
         stage('Create Internal Kubernetes Infrastructure - Ansible') {
@@ -25,7 +25,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                echo 'service docker start'
+                sh 'service docker start'
+                sh ''
             }
         }
         stage('Push') {
