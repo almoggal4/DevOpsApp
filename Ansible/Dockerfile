@@ -2,7 +2,7 @@ FROM ubuntu:latest
 USER root
 RUN apt-get -y update;
 RUN apt-get install -y python3 python3-pip vim openssh-client openssh-server sudo
-RUN python3 -m pip install --user ansible
+RUN python3 -m pip install ansible
 RUN export PATH=$PATH:~/.local/bin
 # prepare for ssh connection
 RUN useradd jenkins-remote-user

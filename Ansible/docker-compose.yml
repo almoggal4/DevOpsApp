@@ -1,7 +1,6 @@
 services:
   ansible:
     container_name: ansible
-    image: ubuntu:20.04
     build:
       context: ./
     volumes:
