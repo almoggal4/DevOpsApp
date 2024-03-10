@@ -7,6 +7,8 @@ services:
     volumes:
       # Share terraform files with my pc
       - "./TerraformSharedFiles/:/Terraform/TerraformAWSInfrastructure/"
+      # share terraform keys with my pc
+      - "/c/Users/almog/Desktop/PrivateFiles/:/Terraform/PrivateFiles/"
     networks:
       - global-docker-container-network
     privileged: true
