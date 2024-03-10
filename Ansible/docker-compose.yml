@@ -6,9 +6,6 @@ services:
     volumes:
     # shared folder with my pc
       - "./AnsibleSharedFiles:/home/root/AnsibleSharedFiles/"
-    # shared .pem file for connecting to the ec2
-      - "../../PrivateFiles/kubernetes-managment-key-pair-private.pem:/home/root/PrivateFiles/kubernetes-managment-key-pair-private.pem"
-    
     restart: always
     stdin_open: true # docker run -i
     tty: true        # docker run -t

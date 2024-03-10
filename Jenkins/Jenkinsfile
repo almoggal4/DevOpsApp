@@ -8,6 +8,8 @@ pipeline {
                 // deploying terraform external AWS infrastructure
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_script_logs'
                 echo "Terraform infrastructure was successfully deployed on AWS"
+                // save the pem file of the ec2 for later use
+                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2-kubernetes.pem jenkins-remote-user@terraform-aws:/Terraform/SSHPEMfile/kubernetes-managment-key-pair-private.pem' 
                 // save the public ip of the ec2 for later use
                 sh 'tail -1 /root/terraform_script_logs > /root/ec2_public_ip'
             }

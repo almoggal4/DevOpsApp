@@ -41,9 +41,9 @@ variable "KubernetesEc2Setting" {
   description = "The setup configuration for the ec2 K8s instance."
 }
 
-variable "PrivateFilesLocation" {
+variable "SSHPEMFileLocation" {
   type = string
-  default = "/Terraform/PrivateFiles/"
+  default = "/Terraform/SSHPEMfile/"
   description = "The path to the private folder for secret files."
 }
 

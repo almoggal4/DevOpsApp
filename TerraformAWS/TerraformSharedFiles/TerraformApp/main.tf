@@ -145,7 +145,7 @@ resource "aws_key_pair" "kubernets-ec2-key-pair" {
 # creates 2 versions of files: pem (the old private key file) and ppk (the new prvate key file - for putty i.e)
 resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  content = "${tls_private_key.kubernetes-managment-key-pair.private_key_pem}"
- filename = "${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem"
+ filename = "${var.SSHPEMFileLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem"
  file_permission ="0777"
  depends_on = [
   tls_private_key.kubernetes-managment-key-pair
@@ -154,7 +154,7 @@ resource "local_file" "kubernetes-ec2-generated-public-key-file" {
  provisioner "local-exec" {
     when = create
     on_failure = continue
-    command = "puttygen ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem -O private -o ${var.PrivateFilesLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
+    command = "puttygen ${var.SSHPEMFileLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.pem -O private -o ${var.SSHPEMFileLocation}${var.KubernetesEc2Setting["key_pair_name"]}-private.ppk"
  }
 }
  # delete the ppk file when the resource is deleted

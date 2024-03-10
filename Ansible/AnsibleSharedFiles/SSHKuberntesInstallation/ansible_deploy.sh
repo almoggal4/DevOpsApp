@@ -1,7 +1,7 @@
 # add the elatsic public ip to the hosts file
 kubernetes_server_public_ip=$(cat ./ec2_public_ip)
 sudo echo "[kubernetes-servers]" > ./hosts
-sudo echo 'master ansible_host='$kubernetes_server_public_ip 'ansible_connection=ssh ansible_ssh_private_key_file=/home/root/PrivateFiles/kubernetes-managment-key-pair-private.pem' >> ./hosts
+sudo echo 'master ansible_host='$kubernetes_server_public_ip 'ansible_connection=ssh ansible_ssh_private_key_file=./ec2-kubernetes.pem' >> ./hosts
 
 # Check the syntax of the playbook
 ansible-playbook playbook.yml --syntax-check
