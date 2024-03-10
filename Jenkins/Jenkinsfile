@@ -9,7 +9,7 @@ pipeline {
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws "cd /Terraform/TerraformAWSInfrastructure/TerraformApp && ./terraform_deploy.sh" > /root/terraform_script_logs'
                 echo "Terraform infrastructure was successfully deployed on AWS"
                 // save the pem file of the ec2 for later use
-                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2-kubernetes.pem jenkins-remote-user@terraform-aws:/Terraform/SSHPEMfile/kubernetes-managment-key-pair-private.pem' 
+                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@terraform-aws:/Terraform/SSHPEMfile/kubernetes-managment-key-pair-private.pem /root/ec2-kubernetes.pem' 
                 // save the public ip of the ec2 for later use
                 sh 'tail -1 /root/terraform_script_logs > /root/ec2_public_ip'
             }
@@ -18,7 +18,9 @@ pipeline {
             steps {
                 echo 'Create/Comply the Kubernetes internal infrastructre in AWS EC2 using Ansible'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "ansible"'
-                // copt the public ip of the ec2 to the ansible host
+                // copy the pem file of the ec2 to the ansible host
+                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2-kubernetes.pem jenkins-remote-user@ansible:/home/root/AnsibleSharedFiles/SSHKuberntesInstallation/' 
+                // copy the public ip of the ec2 to the ansible host
                 sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2_public_ip jenkins-remote-user@ansible:/home/root/AnsibleSharedFiles/SSHKuberntesInstallation/' 
                 // installing kuberentes on the ec2 using ansible
                 sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa jenkins-remote-user@ansible "cd /home/root/AnsibleSharedFiles/SSHKuberntesInstallation && ./ansible_deploy.sh"'
