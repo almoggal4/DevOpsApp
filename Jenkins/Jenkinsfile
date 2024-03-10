@@ -19,7 +19,7 @@ pipeline {
                 echo 'Create/Comply the Kubernetes internal infrastructre in AWS EC2 using Ansible'
                 sh 'ssh-keygen -f "/root/.ssh/known_hosts" -R "ansible"'
                 // copy the pem file of the ec2 to the ansible host
-                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2-kubernetes.pem jenkins-remote-user@ansible:/home/root/AnsibleSharedFiles/SSHKuberntesInstallation/' 
+                sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2-kubernetes.pem jenkins-remote-user@ansible:/home/jenkins-remote-user/SSHPEM/' 
                 // copy the public ip of the ec2 to the ansible host
                 sh 'scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/ec2_public_ip jenkins-remote-user@ansible:/home/root/AnsibleSharedFiles/SSHKuberntesInstallation/' 
                 // installing kuberentes on the ec2 using ansible

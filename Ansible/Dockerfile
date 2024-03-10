@@ -8,8 +8,11 @@ RUN export PATH=$PATH:~/.local/bin
 RUN useradd jenkins-remote-user
 RUN mkdir /home/jenkins-remote-user/; exit 0 && \
     mkdir /home/jenkins-remote-user/.ssh; exit 0 && \
+    mkdir /home/jenkins-remote-user/SSHPEM/; exit 0 && \
     chmod 700 /home/jenkins-remote-user/.ssh && \
-    chown -R jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user
+    chown -R jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user && \
+RUN mkdir /home/jenkins-remote-user/SSHPEM/ && \
+    chown jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user/SSHPEM/
 COPY AnsibleSharedFiles/JenkinsPublicKey/jenkinspublickey.pub /home/jenkins-remote-user/.ssh/authorized_keys
 RUN chown jenkins-remote-user:jenkins-remote-user -R /home/jenkins-remote-user/.ssh && \
     chmod 600 /home/jenkins-remote-user/.ssh/authorized_keys
