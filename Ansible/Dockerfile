@@ -8,13 +8,16 @@ RUN export PATH=$PATH:~/.local/bin
 RUN useradd jenkins-remote-user
 RUN mkdir /home/jenkins-remote-user/; exit 0 && \
     mkdir /home/jenkins-remote-user/.ssh; exit 0 && \
-    mkdir /home/jenkins-remote-user/SSHPEM/; exit 0 && \
     chmod 700 /home/jenkins-remote-user/.ssh && \
     chown -R jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user && \
+# not getting runnned
 RUN mkdir /home/jenkins-remote-user/SSHPEM/ && \
-    chown jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user/SSHPEM/
+    chown jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user/SSHPEM/ && \
+    chown jenkins-remote-user:jenkins-remote-user /home/jenkins-remote-user/ && \
+    chmod 700 SSHPEM/
 COPY AnsibleSharedFiles/JenkinsPublicKey/jenkinspublickey.pub /home/jenkins-remote-user/.ssh/authorized_keys
 RUN chown jenkins-remote-user:jenkins-remote-user -R /home/jenkins-remote-user/.ssh && \
     chmod 600 /home/jenkins-remote-user/.ssh/authorized_keys
+ENV ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no"
 RUN echo "jenkins-remote-user   ALL = NOPASSWD: ALL" >> /etc/sudoers
 ENTRYPOINT service ssh restart && bash
