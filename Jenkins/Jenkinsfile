@@ -33,11 +33,6 @@ pipeline {
                 //sh 'service docker start'
             }
         }
-        stage('Push') {
-            steps {
-                echo 'Push image to docker registery...'
-            }
-        }
         stage('Test') {
             steps {
                 echo 'Testing...'
